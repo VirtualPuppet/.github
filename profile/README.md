@@ -47,7 +47,6 @@ Removed sections:
   * [Architecture](#architecture)
   * [Implementation](#implementation)
 - [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 - [Team Member](#member)
 
