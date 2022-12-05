@@ -19,7 +19,6 @@ Removed sections:
 
 <div align="center">
 
-  <img src="assets/logo.png" alt="logo" width="200" height="auto" />
   <h1>2D Video 손동작 인식 및 얼굴 감정 인식을 통한 가상 인형 제어</h1>
   
   <p>
@@ -57,7 +56,7 @@ Removed sections:
 ## About the Project
 
 <div align="center"> 
-  <img src="assets\demo.PNG" alt="screenshot" />
+  <img src="assets\demo.PNG" alt="screenshot" width="200" height="auto"/>
 </div>
 
 ### Motivation
