@@ -85,6 +85,7 @@ Removed sections:
 | Hand Pose | Hand Open | Hand Close | Point | Thumbs Up | Check | Peace |
   
 - 캐릭터 표정 컨트롤 
+
 사용자의 표정과 캐릭터의 표정을 매칭시켜 캐릭터의 표정을 컨트롤한다. 웹캠을 이용해 실시간으로 찍고 있는 얼굴 영상을 캡쳐하여 얼굴 부분의 Image를 검출한다. 이를 Pre-train된 CNN 모델에 넣어 사용자의 현재 표정 정보에 대한 결과값을 리턴받는다. 이 결과값을 유니티에 전송해 미리 구현한 Mesh texture 데이터를 이용해 해당 표정과 일치하는 캐릭터의 표정으로 바꿔준다. 영상 싱크에 맞게 실시간으로 결과를 출력해야 하므로 연산량을 줄이기 위해 매개변수를 줄여 경량화한 CNN 모델을 사용한다. 이 모델은 Facial Expression Recognition 2013 Dataset으로 Pre-train되어 있는데 해당 데이터셋의 표정 모델은 대부분 서양인이라 한국인과 인종이 달라 실제로 사용했을 때 민감도가 떨어진다는 단점이 있다. 따라서 Korean Drama Multi-Label Facial Emotion Recognition Dataset 및 사용 환경에 맞는 데이터로 Fine-tuning을 진행했다.
 
 |ID            |  0|1|2|3    |
@@ -95,34 +96,29 @@ Removed sections:
 - 안정화를 위한 데이터 전처리
 
 1. 트래킹 실패
+
 Frame상에서 손의 Skeleton 값이 구해지지 않는 경우는 두가지 존재하는데, 첫번째로는 실제로 손이 없는 경우, 두번째로는 일시적으로 트래킹에 실패하는 경우이다. 전자의 경우에는 프레임 상에서 손의 Skeleton 정보를 얻지 못하는 것이 정상적이지만, 후자의 경우에는 손의 Skeleton 정보가 구해져야만 한다. 따라서 먼저 손이 카메라 상에서 보이지 않는 경우인지 아니면 실제로 트래킹에 실패한 경우인지 판단해야 한다. 이를 판단하는 방법으로 우선 각 프레임에서 얻은 손 Skeleton 정보를 Queue에 넣고, Queue의 크기를 일정하게 유지하기 위해서 순차적으로 들어온 Skeleton 정보를 차례로 Queue에서 내보낸다. 매번 Queue에서 뽑은 데이터들은 유니티로 값을 전송한 후에 이를 이전 Frame의 데이터 값을 저장해 놓는 곳에 업데이트 하며 값을 저장한다. 이때 만약 Queue에서 뽑아낸 Skeleton 정보에 아무런 값이 없다면, Queue에 있는 모든 Skeleton 데이터 정보들을 확인한다. 만일 Queue에 있는 모든  Skeleton 값 역시 존재하지 않는다면 이는 손이 카메라에서 사라졌다는 것을 의미하지만, Queue에 있는 skeleton 정보들이 값을 가지고 있다면 이는 일시적인 트래킹 실패를 의미하게 된다. 따라서 이러한 경우에는 미리 저장해 두었던 이전 Frame의 데이터 값을 불러와 이 데이터와 동일하게 Skeleton 값을 저장하고, 이를 유니티 상으로 전송해준다. 마지막으로 현재 프레임의 값을 이전 Frame 데이터 값으로 업데이트 한다.
 
 2. Outlier 데이터 조정
+
 Hand tracking 모델이 항상 신뢰가능한 데이터를 도출해내지 않기 때문에, Outlier한 데이터를 판별하고 이를 적절한 데이터 값으로 변경해 주어야 한다. 우선 일차적으로 모델을 통해 얻은 데이터값의 신뢰도가 50% 미만이면 해당 값은 사용하지 않고, 이전 Frame의 데이터값을 넘겨주게 된다. 신뢰도가 50%를 넘겼지만, 여전히 값이 Outlier인 경우에는, 이를 해결하기 위하여 위와 동일하게 Queue와 이전 Frame의 Skeleton값을 이용한다. 만약 서로 인접하는 프레임(이전 Frame과 이후 Frame)과 현재 Frame의 Skeleton 손가락 벡터 차이가 모두 역치를 벗어나게 된다면, 이는 적절하지 않은 데이터라고 판단하고, 해당 데이터 값을 이전 Frame과 이전 Frame의 Skeleton 데이터 값의 평균으로 설정한다. 
 
 3. Smoothing
+
 실험을 진행하는 과정에서, 손이 움직이지 않는데에도 불구하고 데이터의 값이 일정하게 나오지 않는 것을 확인할 수 있었다. 이에 따라 데이터의 값이 조금만 바뀌는 경우라도 캐릭터의 팔이 과도하게 떨리거나 움직이는 상황이 발생한다. 따라서 이러한 현상을 줄이기 위하여 Kalman filter를 적용하여 이전데이터들을 통해 예측 값을 구하고, 실제 값과 이를 비교하여 Smoothing한 Joint값을 얻고자 하였다. 이때 예측 값은 이전 값에서 지금까지 한 프레임 당 각 Joint의 변화 정도를 계산하여 구하였고, 분산의 경우 모델을 통해 얻은 데이터값의 신뢰도를 이용하여 분산을 정하였다. 이를 통하여 Smoothing하기 전보다 더욱 안정된 캐릭터의 움직임을 확인하였다.
 
 <!-- Getting Started -->
 ## Getting Started
 
-<!-- Prerequisites -->
-### Prerequisites
-
-This project uses Unity, conda 
-
 <!-- Installation -->
 
-<!-- Run Locally -->
-### Run Locally
+### Installation
 
 Clone the tracking project
 
 ```bash
   git clone https://github.com/VirtualPuppet/Handpose.git
 ```
-
-### Installation
 
 Install my-project with npm
 
