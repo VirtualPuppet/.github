@@ -117,9 +117,10 @@ Clone the tracking project
 
 ```bash
   git clone https://github.com/VirtualPuppet/Handpose.git
+  git clone https://github.com/VirtualPuppet/UnityProject.git
 ```
 
-Install my-project with npm
+Setting the environment
 
 ```bash
   conda env create -f setup.yml
@@ -130,6 +131,9 @@ Start the server
 ```bash
   python hand_socket_smoothing.py
 ```
+
+Start our Unity project
+
 
 If you want to run without Unity
 
