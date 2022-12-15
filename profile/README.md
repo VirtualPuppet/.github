@@ -30,7 +30,7 @@ Removed sections:
 <h4>
     <a href="https://drive.google.com/file/d/1CTpG_56LoOdslRMHh4YNsuSvyFgYLkqv/view?usp=sharing">View Demo</a>
   <span> · </span>
-    <a href="assets/Hand tracking과 Motion tracking을 이용한 Digital Puppet.pdf">Documentation</a>
+    <a href="assets\Hand tracking과 Motion tracking을 이용한 Digital Puppet.pdf">Documentation</a>
   <span> · </span>
     <a href="assets\2D Video Hand Tracking, Emotion Recognition을  활용한 Puppet Control_출판.docx.pdf">Paper</a>
   <span> · </span>
